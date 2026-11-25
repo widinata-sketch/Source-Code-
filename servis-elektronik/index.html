@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Servis Elektronik</title>
+<meta name="description" content="Jasa servis elektronik terpercaya: TV, kulkas, AC, mesin cuci, laptop, HP dan lainnya.">
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#fff; --text:#1d2433; --muted:#5b6475;
+    --primary:#0f62fe; --primary-dark:#0846c7; --accent:#ffb020;
+    --wa:#25d366; --border:#e3e6ee; --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+  section{padding:64px 0}
+  h2{font-size:clamp(1.5rem,3vw,2rem);margin-bottom:8px}
+  .sub{color:var(--muted);margin-bottom:32px}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem}
+  .brand .logo{width:36px;height:36px;border-radius:10px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:1.2rem}
+  .menu{display:flex;gap:22px;font-weight:500;color:var(--muted)}
+  .menu a:hover{color:var(--primary)}
+  .burger{display:none;background:none;border:0;font-size:1.6rem;cursor:pointer;color:var(--text)}
+  @media (max-width:760px){
+    .burger{display:block}
+    .menu{display:none;position:absolute;top:64px;left:0;right:0;background:#fff;flex-direction:column;padding:16px;border-bottom:1px solid var(--border)}
+    .menu.open{display:flex}
+  }
+
+  /* Hero */
+  .hero{background:linear-gradient(135deg,#0b1f4d,#0f62fe);color:#fff;padding:88px 0 72px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.15;margin-bottom:16px}
+  .hero p{font-size:1.1rem;opacity:.9;max-width:620px;margin-bottom:28px}
+  .btns{display:flex;flex-wrap:wrap;gap:12px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:600;border:2px solid transparent;transition:.2s}
+  .btn-wa{background:var(--wa);color:#fff}
+  .btn-wa:hover{filter:brightness(.95)}
+  .btn-ghost{border-color:rgba(255,255,255,.6);color:#fff}
+  .btn-ghost:hover{background:rgba(255,255,255,.12)}
+  .stats{display:flex;flex-wrap:wrap;gap:32px;margin-top:44px}
+  .stats b{display:block;font-size:1.8rem;color:var(--accent)}
+  .stats span{opacity:.85;font-size:.95rem}
+
+  /* Cards */
+  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;transition:.2s}
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,98,254,.08)}
+  .card .ic{font-size:2rem;margin-bottom:10px}
+  .card h3{font-size:1.1rem;margin-bottom:6px}
+  .card p{color:var(--muted);font-size:.95rem}
+  .price{margin-top:12px;font-weight:700;color:var(--primary)}
+
+  .why{background:#fff}
+  .steps{counter-reset:s}
+  .steps .card{position:relative;padding-top:48px}
+  .steps .card::before{counter-increment:s;content:counter(s);position:absolute;top:16px;left:22px;width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+
+  .brands{display:flex;flex-wrap:wrap;gap:10px}
+  .brands span{background:#fff;border:1px solid var(--border);padding:8px 16px;border-radius:999px;font-weight:600;color:var(--muted)}
+
+  .testi .card p{color:var(--text);font-style:italic}
+  .testi .who{margin-top:12px;font-weight:600;font-style:normal;color:var(--muted)}
+  .stars{color:var(--accent)}
+
+  /* Booking form */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media (max-width:760px){.two{grid-template-columns:1fr}}
+  form .card{display:grid;gap:12px}
+  label{font-weight:600;font-size:.9rem}
+  input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:10px;font:inherit;background:#fff}
+  textarea{min-height:90px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--primary);border-color:transparent}
+  .info li{list-style:none;display:flex;gap:10px;margin-bottom:12px}
+  .map{width:100%;height:260px;border:0;border-radius:var(--radius);margin-top:8px}
+
+  /* Social */
+  .social{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+  .soc{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;color:#fff;font-weight:600}
+  .soc svg{width:20px;height:20px;fill:currentColor}
+  .soc.ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+  .soc.tt{background:#000}
+  .soc.wa{background:var(--wa)}
+  .soc:hover{filter:brightness(1.1)}
+
+  footer{background:#0b1f4d;color:#cfd8ee;padding:40px 0 24px;font-size:.95rem}
+  footer .social .soc{padding:8px 14px}
+  footer small{display:block;margin-top:24px;opacity:.7}
+
+  .float-wa{position:fixed;right:18px;bottom:18px;width:58px;height:58px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:60}
+  .float-wa svg{width:30px;height:30px;fill:#fff}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="brand"><span class="logo">⚡</span><span data-bind="nama"></span></a>
+    <button class="burger" aria-label="Menu" onclick="document.querySelector('.menu').classList.toggle('open')">☰</button>
+    <nav class="menu" onclick="this.classList.remove('open')">
+      <a href="#layanan">Layanan</a>
+      <a href="#cara">Cara Servis</a>
+      <a href="#testimoni">Testimoni</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1 data-bind="slogan"></h1>
+    <p data-bind="deskripsi"></p>
+    <div class="btns">
+      <a class="btn btn-wa" data-wa target="_blank" rel="noopener">💬 Chat WhatsApp</a>
+      <a class="btn btn-ghost" href="#kontak">📅 Booking Servis</a>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+</section>
+
+<section id="layanan">
+  <div class="wrap">
+    <h2>Layanan Kami</h2>
+    <p class="sub">Harga mulai dari — biaya final setelah pengecekan, tanpa biaya tersembunyi.</p>
+    <div class="grid" id="layananList"></div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="wrap">
+    <h2>Kenapa Pilih Kami?</h2>
+    <p class="sub">Komitmen kami untuk setiap perangkat yang Anda percayakan.</p>
+    <div class="grid" id="keunggulanList"></div>
+  </div>
+</section>
+
+<section id="cara">
+  <div class="wrap">
+    <h2>Cara Servis</h2>
+    <p class="sub">Mudah, cepat, dan transparan.</p>
+    <div class="grid steps" id="langkahList"></div>
+    <h3 style="margin:40px 0 14px">Merek yang Kami Tangani</h3>
+    <div class="brands" id="merekList"></div>
+  </div>
+</section>
+
+<section id="testimoni" class="why testi">
+  <div class="wrap">
+    <h2>Kata Pelanggan</h2>
+    <p class="sub">Ulasan dari pelanggan kami.</p>
+    <div class="grid" id="testiList"></div>
+  </div>
+</section>
+
+<section id="kontak">
+  <div class="wrap two">
+    <form id="booking">
+      <div class="card">
+        <h2>Booking Servis</h2>
+        <p class="sub" style="margin:0">Isi form, pesan langsung terkirim ke WhatsApp kami.</p>
+        <div><label for="fNama">Nama</label><input id="fNama" required></div>
+        <div><label for="fAlamat">Alamat</label><input id="fAlamat" required></div>
+        <div><label for="fJenis">Jenis Perangkat</label><select id="fJenis" required></select></div>
+        <div><label for="fMerek">Merek / Tipe</label><input id="fMerek" placeholder="cth: Samsung 43 inch"></div>
+        <div><label for="fKeluhan">Keluhan / Kerusakan</label><textarea id="fKeluhan" required placeholder="cth: TV mati total, lampu indikator berkedip"></textarea></div>
+        <div><label for="fMetode">Metode</label>
+          <select id="fMetode"><option>Datang ke toko</option><option>Teknisi ke rumah</option><option>Antar-jemput</option></select></div>
+        <button class="btn btn-wa" type="submit" style="justify-content:center;cursor:pointer">💬 Kirim via WhatsApp</button>
+      </div>
+    </form>
+    <div>
+      <h2>Kontak &amp; Lokasi</h2>
+      <ul class="info" style="margin-top:16px" id="infoList"></ul>
+      <iframe class="map" id="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Lokasi toko"></iframe>
+      <h3 style="margin-top:24px">Ikuti Kami</h3>
+      <div class="social" id="socialMain"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b data-bind="nama" style="font-size:1.2rem;color:#fff"></b>
+    <p data-bind="alamat"></p>
+    <div class="social" id="socialFooter"></div>
+    <small>© <span id="year"></span> <span data-bind="nama"></span>. Semua hak dilindungi.</small>
+  </div>
+</footer>
+
+<a class="float-wa" data-wa target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>
+</a>
+
+<script>
+/* =====================================================================
+   DATA TOKO — CUKUP UBAH BAGIAN INI SAJA
+   ===================================================================== */
+const DATA = {
+  nama: "Servis Elektronik Jaya",
+  slogan: "Elektronik Rusak? Kami Perbaiki Cepat & Bergaransi",
+  deskripsi: "Servis TV, kulkas, AC, mesin cuci, laptop dan HP oleh teknisi berpengalaman. Bisa datang ke toko atau teknisi ke rumah.",
+  alamat: "Jl. Contoh No. 123, Kota Anda",
+  whatsapp: "6281234567890",          // format internasional, tanpa + dan tanpa 0 di depan
+  telepon: "0812-3456-7890",
+  email: "servis@contoh.com",
+  jamBuka: "Senin–Sabtu 08.00–20.00 · Minggu 09.00–15.00",
+  // Ambil dari Google Maps > Bagikan > Sematkan peta > salin URL di src="..."
+  mapsEmbed: "https://www.google.com/maps?q=Monas+Jakarta&output=embed",
+
+  sosial: {
+    instagram: "https://www.instagram.com/username_anda",
+    tiktok:    "https://www.tiktok.com/@username_anda",
+  },
+
+  statistik: [
+    { angka: "10+",   label: "Tahun pengalaman" },
+    { angka: "5.000+", label: "Perangkat diperbaiki" },
+    { angka: "30 hari", label: "Garansi servis" },
+  ],
+
+  layanan: [
+    { ic: "📺", nama: "Servis TV",          ket: "LED, LCD, Smart TV — mati total, layar bergaris, tidak ada suara.", harga: "Rp 100.000" },
+    { ic: "❄️", nama: "Servis AC",          ket: "Cuci AC, isi freon, AC tidak dingin, bocor air.",                harga: "Rp 75.000" },
+    { ic: "🧊", nama: "Servis Kulkas",      ket: "Tidak dingin, bunga es berlebih, kompresor bermasalah.",        harga: "Rp 100.000" },
+    { ic: "🌀", nama: "Servis Mesin Cuci",  ket: "Tidak berputar, bocor, pengering mati, error kode.",             harga: "Rp 100.000" },
+    { ic: "💻", nama: "Servis Laptop/PC",   ket: "Install ulang, ganti LCD/keyboard, mati total, upgrade SSD.",   harga: "Rp 75.000" },
+    { ic: "📱", nama: "Servis HP",          ket: "Ganti LCD, baterai, konektor charger, mati total.",             harga: "Rp 50.000" },
+  ],
+
+  keunggulan: [
+    { ic: "🛡️", nama: "Bergaransi",        ket: "Garansi hingga 30 hari untuk setiap perbaikan." },
+    { ic: "🔍", nama: "Cek Gratis",        ket: "Diagnosa gratis bila servis dilanjutkan." },
+    { ic: "🔧", nama: "Teknisi Ahli",      ket: "Teknisi berpengalaman & bersertifikat." },
+    { ic: "🚚", nama: "Antar-Jemput",      ket: "Layanan jemput & antar barang untuk area tertentu." },
+  ],
+
+  langkah: [
+    { nama: "Hubungi Kami",    ket: "Chat WhatsApp atau isi form booking." },
+    { nama: "Pengecekan",      ket: "Teknisi mendiagnosa kerusakan." },
+    { nama: "Konfirmasi Biaya", ket: "Kami kabari biaya sebelum dikerjakan." },
+    { nama: "Selesai & Garansi", ket: "Perangkat beres, siap diambil/diantar." },
+  ],
+
+  merek: ["Samsung","LG","Sharp","Panasonic","Polytron","Toshiba","Daikin","Asus","Lenovo","Acer","Apple","Xiaomi","Oppo"],
+
+  testimoni: [
+    { nama: "Budi S.",  isi: "TV saya mati total, sehari langsung beres. Harga jujur!", bintang: 5 },
+    { nama: "Rina A.",  isi: "Teknisi datang tepat waktu, AC dingin lagi. Recommended.", bintang: 5 },
+    { nama: "Andi P.",  isi: "Laptop ganti keyboard cepat dan rapi, ada garansinya.", bintang: 5 },
+  ],
+};
+/* ===================================================================== */
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const waLink = (msg = "Halo, saya mau tanya servis elektronik.") =>
+  `https://wa.me/${DATA.whatsapp}?text=${encodeURIComponent(msg)}`;
+
+const ICON = {
+  instagram: '<svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/></svg>',
+  tiktok: '<svg viewBox="0 0 24 24"><path d="M19.6 6.7a4.8 4.8 0 0 1-3.8-4.2V2h-3.4v13.7a2.9 2.9 0 0 1-5.2 1.7 2.9 2.9 0 0 1 3.2-4.5V9.4a6.3 6.3 0 0 0-5.4 10.7 6.3 6.3 0 0 0 10.8-4.4V8.7a8.2 8.2 0 0 0 4.8 1.5V6.8l-1-.1z"/></svg>',
+  wa: '<svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>',
+};
+
+function render() {
+  document.title = DATA.nama;
+  document.querySelectorAll("[data-bind]").forEach(el => el.textContent = DATA[el.dataset.bind]);
+  document.querySelectorAll("[data-wa]").forEach(a => a.href = waLink());
+  $("#year").textContent = new Date().getFullYear();
+
+  $("#stats").innerHTML = DATA.statistik.map(s => `<div><b>${esc(s.angka)}</b><span>${esc(s.label)}</span></div>`).join("");
+
+  $("#layananList").innerHTML = DATA.layanan.map(l => `
+    <div class="card"><div class="ic">${l.ic}</div><h3>${esc(l.nama)}</h3><p>${esc(l.ket)}</p>
+    <div class="price">Mulai ${esc(l.harga)}</div></div>`).join("");
+
+  $("#keunggulanList").innerHTML = DATA.keunggulan.map(k => `
+    <div class="card"><div class="ic">${k.ic}</div><h3>${esc(k.nama)}</h3><p>${esc(k.ket)}</p></div>`).join("");
+
+  $("#langkahList").innerHTML = DATA.langkah.map(k => `
+    <div class="card"><h3>${esc(k.nama)}</h3><p>${esc(k.ket)}</p></div>`).join("");
+
+  $("#merekList").innerHTML = DATA.merek.map(m => `<span>${esc(m)}</span>`).join("");
+
+  $("#testiList").innerHTML = DATA.testimoni.map(t => `
+    <div class="card"><div class="stars">${"★".repeat(t.bintang)}${"☆".repeat(5 - t.bintang)}</div>
+    <p>“${esc(t.isi)}”</p><div class="who">— ${esc(t.nama)}</div></div>`).join("");
+
+  $("#fJenis").innerHTML = DATA.layanan.map(l => `<option>${esc(l.nama.replace(/^Servis /, ""))}</option>`).join("") + "<option>Lainnya</option>";
+
+  $("#infoList").innerHTML = [
+    ["📍", DATA.alamat],
+    ["📞", DATA.telepon],
+    ["✉️", DATA.email],
+    ["🕘", DATA.jamBuka],
+  ].map(([i, t]) => `<li><span>${i}</span><span>${esc(t)}</span></li>`).join("");
+  $("#map").src = DATA.mapsEmbed;
+
+  const socialHTML = [
+    DATA.sosial.instagram && `<a class="soc ig" href="${esc(DATA.sosial.instagram)}" target="_blank" rel="noopener">${ICON.instagram}Instagram</a>`,
+    DATA.sosial.tiktok && `<a class="soc tt" href="${esc(DATA.sosial.tiktok)}" target="_blank" rel="noopener">${ICON.tiktok}TikTok</a>`,
+    `<a class="soc wa" href="${waLink()}" target="_blank" rel="noopener">${ICON.wa}WhatsApp</a>`,
+  ].filter(Boolean).join("");
+  $("#socialMain").innerHTML = socialHTML;
+  $("#socialFooter").innerHTML = socialHTML;
+}
+
+$("#booking").addEventListener("submit", e => {
+  e.preventDefault();
+  const v = id => $("#" + id).value.trim();
+  const msg =
+`Halo ${DATA.nama}, saya mau booking servis:
+Nama: ${v("fNama")}
+Alamat: ${v("fAlamat")}
+Perangkat: ${v("fJenis")} ${v("fMerek")}
+Keluhan: ${v("fKeluhan")}
+Metode: ${v("fMetode")}`;
+  window.open(waLink(msg), "_blank");
+});
+
+render();
+</script>
+</body>
+</html>
