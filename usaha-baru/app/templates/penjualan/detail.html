@@ -2,7 +2,16 @@
 {% from "_macros.html" import ikon %}
 {% block judul %}Penjualan {{ pj.no_nota }}{% endblock %}
 {% block isi %}
-<div class="kepala">
+<div class="kop-nota hanya-cetak">
+  <div class="kop-nota-toko">{{ nama_usaha }}</div>
+  <div class="kop-nota-info">
+    <span>Nota {{ pj.no_nota }}</span>
+    <span>{{ pj.tanggal|tgl_panjang }}</span>
+    <span>{{ pj.pelanggan or 'Pelanggan umum' }}</span>
+  </div>
+</div>
+
+<div class="kepala no-print">
   <div class="kepala-judul">
     <a class="kembali" href="{{ url_for('penjualan.daftar', bulan=pj.tanggal[:7]) }}">← Kembali ke daftar penjualan</a>
     <h1>Penjualan {{ pj.no_nota }}</h1>
@@ -54,4 +63,5 @@
     {% if pj.catatan %}<p class="muted" style="margin:0">Catatan: {{ pj.catatan }}</p>{% endif %}
   </aside>
 </div>
+<p class="hanya-cetak kaki-nota">Terima kasih telah berbelanja di {{ nama_usaha }}.</p>
 {% endblock %}

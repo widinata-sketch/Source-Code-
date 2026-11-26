@@ -162,3 +162,11 @@ def test_file_static_diberi_versi_supaya_tidak_tertahan_cache(client):
     teks = client.get("/pembelian/baru").get_data(as_text=True)
     assert "/static/transaksi.js?v=" in teks and "/static/style.css?v=" in teks
     assert client.get("/static/transaksi.js?v=123").status_code == 200
+
+
+def test_nota_penjualan_menampilkan_nama_toko(client):
+    isi_data(client)
+    client.post("/pengaturan/nama", data={"nama": "Toko Sumber Rejeki"})
+    html = client.get("/penjualan/1").get_data(as_text=True)
+    assert '<div class="kop-nota-toko">Toko Sumber Rejeki</div>' in html
+    assert "Terima kasih telah berbelanja di Toko Sumber Rejeki." in html
