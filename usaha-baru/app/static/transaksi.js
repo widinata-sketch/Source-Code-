@@ -1,0 +1,230 @@
+// Form transaksi multi-barang (penjualan & pembelian): tambah/hapus baris, hitung total, metode bayar.
+(function () {
+  var form = document.getElementById('form-transaksi');
+  if (!form) return;
+  var mode = form.dataset.mode; // 'jual' | 'beli'
+  var tbody = document.getElementById('baris-item');
+  var tpl = document.getElementById('tpl-baris');
+
+  function num(s) { return parseInt(String(s || '').replace(/[^\d]/g, ''), 10) || 0; }
+  function rp(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+  function el(id) { return document.getElementById(id); }
+  function setTeks(id, teks) { var e = el(id); if (e) e.textContent = teks; }
+  function opsi(row) { var s = row.querySelector('.sel-barang'); return s && s.value ? s.selectedOptions[0] : null; }
+  function baris() { return Array.prototype.slice.call(tbody.querySelectorAll('.baris-item')); }
+
+  function pilihBarang(row, isiHarga) {
+    var o = opsi(row);
+    var info = row.querySelector('.info-stok');
+    if (!o) { info.textContent = ''; return; }
+    if (isiHarga) row.querySelector('.harga').value = o.dataset.harga || '';
+    info.textContent = 'Stok ' + o.dataset.stok + ' ' + o.dataset.satuan;
+  }
+
+  function hitung() {
+    var sub = 0, hpp = 0, item = 0;
+    baris().forEach(function (row) {
+      var q = num(row.querySelector('.qty').value);
+      var h = num(row.querySelector('.harga').value);
+      row.querySelector('.subtotal').textContent = rp(q * h);
+      sub += q * h;
+      var o = opsi(row);
+      var info = row.querySelector('.info-stok');
+      if (!o) return;
+      item += q;
+      hpp += q * parseFloat(o.dataset.hpp || '0');
+      if (mode === 'jual') {
+        var stok = parseInt(o.dataset.stok, 10) || 0;
+        var lebih = q > stok;
+        info.classList.toggle('oranye', lebih);
+        info.classList.toggle('tebal', lebih);
+        info.textContent = lebih ? 'Melebihi stok (sisa ' + stok + ' ' + o.dataset.satuan + ')'
+                                 : 'Stok ' + stok + ' ' + o.dataset.satuan;
+      }
+    });
+    var diskon = num(el('diskon') && el('diskon').value);
+    var total = sub - diskon;
+    setTeks('subtotal', rp(sub));
+    setTeks('jumlah-item', item);
+    setTeks('total', rp(total));
+    if (el('sisa-hutang')) {
+      var sisa = total - num(el('uang_muka').value);
+      setTeks('sisa-hutang', sisa > 0 ? rp(sisa) : 'Rp 0 (pilih Lunas)');
+    }
+    if (mode === 'jual') {
+      setTeks('hpp', rp(hpp));
+      setTeks('laba', rp(total - hpp));
+      var diterima = num(el('diterima') && el('diterima').value);
+      setTeks('kembalian', !diterima ? '–' : diterima >= total ? rp(diterima - total) : 'Kurang ' + rp(total - diterima));
+    }
+    return total;
+  }
+
+  function tambahBaris() {
+    var row = tpl.content.firstElementChild.cloneNode(true);
+    tbody.appendChild(row);
+    row.querySelector('.sel-barang').focus();
+    hitung();
+  }
+
+  tbody.addEventListener('input', hitung);
+  tbody.addEventListener('change', function (e) {
+    if (e.target.classList.contains('sel-barang')) pilihBarang(e.target.closest('tr'), true);
+    hitung();
+  });
+  tbody.addEventListener('click', function (e) {
+    var step = e.target.closest('[data-step]');
+    var hapus = e.target.closest('.hapus-baris');
+    if (step) {
+      var input = step.closest('tr').querySelector('.qty');
+      input.value = Math.max(1, num(input.value) + parseInt(step.dataset.step, 10));
+      hitung();
+    } else if (hapus) {
+      if (baris().length > 1) hapus.closest('tr').remove();
+      else {
+        var row = hapus.closest('tr');
+        row.querySelector('.sel-barang').value = '';
+        row.querySelector('.qty').value = 1;
+        row.querySelector('.harga').value = '';
+        pilihBarang(row, false);
+      }
+      hitung();
+    }
+  });
+  var tombolTambah = el('tambah-baris');
+  if (tombolTambah) tombolTambah.addEventListener('click', tambahBaris);
+  ['diskon', 'diterima', 'uang_muka'].forEach(function (id) { if (el(id)) el(id).addEventListener('input', hitung); });
+
+  // Cara bayar pembelian: lunas / tempo
+  function aturCaraBayar() {
+    var dipilih = form.querySelector('input[name="cara_bayar"]:checked');
+    if (!dipilih) return;
+    var tempo = dipilih.value === 'tempo';
+    el('bagian-tempo').classList.toggle('tersembunyi', !tempo);
+    el('kotak-hutang').classList.toggle('tersembunyi', !tempo);
+    setTeks('label-akun', tempo ? 'Uang muka dibayar dari' : 'Dibayar dari');
+    if (tempo && !el('jatuh_tempo').value) aturJatuhTempo(14);
+    hitung();
+  }
+  function aturJatuhTempo(hari) {
+    var tgl = form.querySelector('input[name="tanggal"]').value;
+    var d = tgl ? new Date(tgl + 'T00:00:00') : new Date();
+    d.setDate(d.getDate() + hari);
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    el('jatuh_tempo').value = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    form.querySelectorAll('[data-hari]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.hari === String(hari) ? 'true' : 'false');
+    });
+  }
+  form.querySelectorAll('input[name="cara_bayar"]').forEach(function (r) { r.addEventListener('change', aturCaraBayar); });
+  form.querySelectorAll('[data-hari]').forEach(function (b) {
+    b.addEventListener('click', function () { aturJatuhTempo(parseInt(b.dataset.hari, 10)); });
+  });
+  if (el('jatuh_tempo')) el('jatuh_tempo').addEventListener('input', function () {
+    form.querySelectorAll('[data-hari]').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+  });
+
+  // Metode bayar (penjualan)
+  function aturMetode() {
+    var dipilih = form.querySelector('input[name="metode_bayar"]:checked');
+    if (!dipilih) return;
+    var tunai = dipilih.value === 'tunai';
+    el('bagian-tunai').classList.toggle('tersembunyi', !tunai);
+    el('bagian-nontunai').classList.toggle('tersembunyi', tunai);
+    var sel = el('akun_nontunai');
+    if (!tunai && sel && !sel.dataset.diubah) {
+      var mau = dipilih.value === 'qris' ? 'ewallet' : 'bank';
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].dataset.jenis === mau) { sel.selectedIndex = i; break; }
+      }
+    }
+    var ref = el('no_referensi');
+    if (ref) ref.placeholder = { qris: 'ID transaksi QRIS', debit: 'No. approval / 4 digit akhir kartu', transfer: 'No. referensi transfer' }[dipilih.value] || '';
+  }
+  form.querySelectorAll('input[name="metode_bayar"]').forEach(function (r) { r.addEventListener('change', aturMetode); });
+  if (el('akun_nontunai')) el('akun_nontunai').addEventListener('change', function () { this.dataset.diubah = '1'; });
+  form.querySelectorAll('[data-bayar]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      el('diterima').value = b.dataset.bayar === 'pas' ? hitung() : b.dataset.bayar;
+      hitung();
+    });
+  });
+
+  // Barang baru dari pop-up (pembelian): simpan lewat fetch, lalu langsung pilih di baris.
+  var dlg = el('dlg-barang');
+  if (dlg) {
+    var formBarang = el('form-barang-baru');
+    var galatBarang = el('galat-barang-baru');
+    var tombolSimpan = formBarang.querySelector('button[type="submit"]');
+    var inputKode = formBarang.elements.kode;
+
+    function tampilGalat(teks) {
+      galatBarang.textContent = teks;
+      galatBarang.classList.toggle('tersembunyi', !teks);
+    }
+    function opsiBaru(b) {
+      var o = new Option(b.kode + ' · ' + b.nama, b.id);
+      o.dataset.harga = '';
+      o.dataset.stok = '0';
+      o.dataset.hpp = '0';
+      o.dataset.satuan = b.satuan;
+      return o;
+    }
+    function masukkanBarang(b) {
+      tbody.querySelectorAll('.sel-barang').forEach(function (s) { s.appendChild(opsiBaru(b)); });
+      tpl.content.querySelector('.sel-barang').appendChild(opsiBaru(b));
+      var row = baris().filter(function (r) { return !r.querySelector('.sel-barang').value; })[0];
+      if (!row) { tambahBaris(); row = baris()[baris().length - 1]; }
+      row.querySelector('.sel-barang').value = String(b.id);
+      pilihBarang(row, true);
+      hitung();
+      return row;
+    }
+
+    el('buka-barang-baru').addEventListener('click', function () {
+      tampilGalat('');
+      dlg.showModal();
+      formBarang.elements.nama.focus();
+    });
+    el('batal-barang-baru').addEventListener('click', function () { dlg.close(); });
+
+    formBarang.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!formBarang.elements.nama.value.trim()) {
+        tampilGalat('Nama barang wajib diisi.');
+        formBarang.elements.nama.focus();
+        return;
+      }
+      tombolSimpan.disabled = true;
+      tampilGalat('');
+      fetch(formBarang.dataset.url, { method: 'POST', body: new FormData(formBarang), credentials: 'same-origin' })
+        .then(function (r) {
+          var json = (r.headers.get('Content-Type') || '').indexOf('application/json') !== -1;
+          if (!json) throw { pesan: 'Sesi habis. Muat ulang halaman lalu masuk lagi.' };
+          return r.json().then(function (data) {
+            if (!r.ok) throw { pesan: data.galat || 'Barang gagal disimpan.' };
+            return data;
+          });
+        })
+        .then(function (b) {
+          var row = masukkanBarang(b);
+          formBarang.reset();
+          inputKode.value = b.kode_berikut;
+          dlg.close();
+          var info = el('info-barang-baru');
+          info.querySelector('span').textContent = 'Barang ' + b.kode + ' · ' + b.nama + ' ditambahkan dan sudah dipilih. Isi jumlah dan harga belinya.';
+          info.classList.remove('tersembunyi');
+          row.querySelector('.harga').focus();
+        })
+        .catch(function (err) {
+          tampilGalat((err && err.pesan) || 'Tidak terhubung ke server. Coba lagi.');
+        })
+        .then(function () { tombolSimpan.disabled = false; });
+    });
+  }
+
+  baris().forEach(function (row) { pilihBarang(row, false); });
+  aturMetode();
+  aturCaraBayar();
+  hitung();
+})();

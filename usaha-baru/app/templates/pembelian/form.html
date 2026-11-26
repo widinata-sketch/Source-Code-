@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% from "_macros.html" import ikon %}
+{% from "_baris_item.html" import baris_item %}
+{% block judul %}{{ 'Edit pembelian' if pembelian else 'Pembelian baru' }}{% endblock %}
+{% block isi %}
+<div class="kepala">
+  <div class="kepala-judul">
+    <a class="kembali" href="{{ url_for('pembelian.daftar') }}">← Kembali ke daftar pembelian</a>
+    <h1>{{ 'Edit pembelian' if pembelian else 'Pembelian baru' }}</h1>
+  </div>
+</div>
+
+<form method="post" id="form-transaksi" data-mode="beli" class="baris-kartu">
+  <div class="lebar-2" style="display:flex;flex-direction:column;gap:16px;min-width:0">
+    <section class="kartu">
+      <div class="form-grid">
+        <label class="isian">Tanggal
+          <input class="field" type="date" name="tanggal" value="{{ data.tanggal }}" required>
+        </label>
+        <label class="isian">No. faktur (opsional)
+          <input class="field" name="no_faktur" value="{{ data.no_faktur or '' }}">
+        </label>
+        <label class="isian">Pemasok (opsional)
+          <input class="field" name="pemasok" value="{{ data.pemasok or '' }}" placeholder="Contoh: CV Sumber Pangan">
+        </label>
+      </div>
+    </section>
+
+    <section class="kartu kartu-tabel">
+      <div class="kartu-kepala"><h2>Barang dibeli</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-kecil" type="button" id="buka-barang-baru" aria-haspopup="dialog">{{ ikon('tambah', 16) }}Barang baru</button>
+          <button class="btn btn-kecil" type="button" id="tambah-baris">{{ ikon('tambah', 16) }}Tambah baris</button>
+        </div>
+      </div>
+      <div class="pad tersembunyi" id="info-barang-baru" role="status">
+        <div class="pesan pesan-sukses" style="font-size:13px">{{ ikon('cek', 16) }}<span></span></div>
+      </div>
+      <div class="gulir">
+        <table class="tabel">
+          <thead><tr><th>Barang</th><th class="tengah">Jumlah</th><th>Harga beli / satuan</th><th class="kanan">Subtotal</th><th><span class="tersembunyi">Hapus</span></th></tr></thead>
+          <tbody id="baris-item">
+            {% for it in items %}{{ baris_item(it, barang, 'beli') }}{% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="pad petunjuk" style="margin:0;padding-bottom:12px">Harga beli terisi otomatis dari pembelian terakhir; ubah sesuai faktur. Harga modal rata-rata diperbarui setelah disimpan.</p>
+    </section>
+  </div>
+
+  <aside class="kartu lebar-1">
+    <h2>Pembayaran</h2>
+    <div class="ringkasan-baris"><span class="muted">Jumlah barang</span><span class="angka" id="jumlah-item">0</span></div>
+    <div class="ringkasan-total"><span class="tebal">Total</span><span class="angka" id="total">Rp 0</span></div>
+    <span class="tersembunyi" id="subtotal"></span>
+
+    <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">
+      <legend style="font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:8px">Cara bayar</legend>
+      <div class="metode-grid">
+        <label class="metode" style="flex-direction:column;gap:2px">
+          <input type="radio" name="cara_bayar" value="lunas" {% if data.cara_bayar != 'tempo' %}checked{% endif %}>
+          Lunas<span class="petunjuk">dibayar hari itu</span>
+        </label>
+        <label class="metode" style="flex-direction:column;gap:2px">
+          <input type="radio" name="cara_bayar" value="tempo" {% if data.cara_bayar == 'tempo' %}checked{% endif %}>
+          Tempo<span class="petunjuk">bayar belakangan</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <div id="bagian-tempo" class="{{ '' if data.cara_bayar == 'tempo' else 'tersembunyi' }}" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:600;color:var(--ink-2)">Jangka waktu</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <button class="pil" type="button" data-hari="7">7 hari</button>
+          <button class="pil" type="button" data-hari="14">14 hari</button>
+          <button class="pil" type="button" data-hari="30">30 hari</button>
+        </div>
+      </div>
+      <label class="isian">Jatuh tempo
+        <input class="field" type="date" id="jatuh_tempo" name="jatuh_tempo" value="{{ data.jatuh_tempo or '' }}">
+      </label>
+      <label class="isian">Uang muka / DP (opsional)
+        <input class="field" id="uang_muka" name="uang_muka" inputmode="numeric" value="{{ data.uang_muka or '' }}" placeholder="0">
+      </label>
+    </div>
+
+    <label class="isian"><span id="label-akun">{{ 'Uang muka dibayar dari' if data.cara_bayar == 'tempo' else 'Dibayar dari' }}</span>
+      <select class="field" name="akun_id">
+        {% for a in akun %}<option value="{{ a.id }}" {% if data.akun_id == a.id %}selected{% endif %}>{{ a.nama }}</option>{% endfor %}
+      </select>
+    </label>
+
+    <div id="kotak-hutang" class="{{ '' if data.cara_bayar == 'tempo' else 'tersembunyi' }}" style="background:var(--warn-soft);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;color:#6B3A00">
+      <div class="ringkasan-baris" style="font-weight:700;font-size:15px"><span>Jadi hutang</span><span class="angka" id="sisa-hutang">Rp 0</span></div>
+      <span class="kecil">Stok langsung bertambah. Hutang muncul di menu Hutang pemasok sampai dilunasi.</span>
+    </div>
+    <label class="isian">Catatan (opsional)
+      <input class="field" name="catatan" value="{{ data.catatan or '' }}">
+    </label>
+    <button class="btn btn-utama btn-besar" type="submit">Simpan pembelian</button>
+    <a class="btn" href="{{ url_for('pembelian.detail', pembelian_id=pembelian.id) if pembelian else url_for('pembelian.daftar') }}">Batal</a>
+  </aside>
+</form>
+
+<dialog class="dialog" id="dlg-barang" aria-labelledby="judul-dlg-barang">
+  <form id="form-barang-baru" data-url="{{ url_for('barang.cepat') }}" novalidate>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <h2 id="judul-dlg-barang">Barang baru</h2>
+      <p class="muted kecil" style="margin:0">Setelah disimpan, barang ini langsung terpilih di pembelian. Stoknya bertambah dari pembelian ini.</p>
+    </div>
+    <div class="pesan pesan-galat tersembunyi" id="galat-barang-baru" role="alert" style="font-size:13px"></div>
+    <label class="isian">Nama barang
+      <input class="field" name="nama" required autocomplete="off" placeholder="Contoh: Dispenser Miyako WD-29PXC">
+    </label>
+    <div class="form-grid">
+      <label class="isian">Kode barang
+        <input class="field" name="kode" value="{{ kode_berikut }}" data-kode-berikut="{{ kode_berikut }}">
+      </label>
+      <label class="isian">Satuan
+        <input class="field" name="satuan" value="pcs" placeholder="pcs, unit, dus…">
+      </label>
+      <label class="isian">Harga jual (Rp)
+        <input class="field" name="harga_jual" inputmode="numeric" placeholder="0">
+      </label>
+      <label class="isian">Stok minimum
+        <input class="field" name="stok_minimum" inputmode="numeric" placeholder="0">
+      </label>
+    </div>
+    <p class="petunjuk" style="margin:0">Kode terisi otomatis. Harga beli diisi di baris pembelian.</p>
+    <div style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap">
+      <button class="btn" type="button" id="batal-barang-baru">Batal</button>
+      <button class="btn btn-utama" type="submit">Simpan barang</button>
+    </div>
+  </form>
+</dialog>
+
+<template id="tpl-baris">{{ baris_item({'barang_id': None, 'qty': 1, 'harga': ''}, barang, 'beli') }}</template>
+{% endblock %}
+{% block skrip %}<script src="{{ url_for('static', filename='transaksi.js') }}"></script>{% endblock %}
